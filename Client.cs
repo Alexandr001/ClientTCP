@@ -7,41 +7,35 @@ namespace ProjectTCP
 {
 	public class Client
 	{
-		private readonly NetworkStream _stream;
-		public Client(NetworkStream stream)
+		private readonly BinaryReader _reader;
+		private readonly BinaryWriter _writer;
+		public Client(BinaryReader reader, BinaryWriter writer)
 		{
-			_stream = stream;
+			_reader = reader;
+			_writer = writer;
 		}
 
 		public void WriteMessage(int value)	
 		{
-			BinaryWriter writer = new BinaryWriter(_stream);
-			writer.Write(value);
-			writer.Flush();
-			writer.Close();
+			_writer.Write(value);
+			_writer.Flush();
 		}
 		
 		public void WriteMessage(string message)	
 		{
-			BinaryWriter writer = new BinaryWriter(_stream);
-			writer.Write(message);
-			writer.Flush();
-			writer.Close();
+			_writer.Write(message);
+			_writer.Flush();
 		}
 
 		public string ReadMessageString()
 		{
-			BinaryReader reader = new BinaryReader(_stream);
-			string message = reader.ReadString();
-			reader.Close();
+			string message = _reader.ReadString();
 			return message;
 		}
 
 		public int ReadMessageInt()
 		{
-			BinaryReader reader = new BinaryReader(_stream);
-			int message = reader.ReadInt32();
-			reader.Close();
+			int message = _reader.ReadInt32();
 			return message;
 		}
 	}
