@@ -28,15 +28,18 @@ namespace ProjectTCP
 		}
 
 		public string ReadMessageString()
-		{
-			string message = _reader.ReadString();
-			return message;
+		{ 
+			return _reader.ReadString();;
 		}
 
 		public int ReadMessageInt()
 		{
-			int message = _reader.ReadInt32();
-			return message;
+			return _reader.ReadInt32();
+		}
+
+		public byte[] ReadFileByte(int length)
+		{
+			return _reader.ReadBytes(length);
 		}
 	}
 }

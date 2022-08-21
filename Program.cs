@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using ProjectTCP.ClientFile;
+using File = ProjectTCP.ClientFile.File;
 
 namespace ProjectTCP
 {
@@ -28,13 +30,27 @@ namespace ProjectTCP
 				Console.WriteLine("Введите режим работы программы: \n" + "1 - Получить текстовый файл\n" + "2 - Получить двоичный файл");
 
 				int operatingMode = Convert.ToInt32(Console.ReadLine());
-				client.WriteMessage(operatingMode);
+				client.WriteMessage(operatingMode); // Отправка режима работы
 
-				string listFileName = client.ReadMessageString();
+				string listFileName = client.ReadMessageString(); // Чтение списска файлов
+				
+				Console.WriteLine($"Доступные файлы: \n {listFileName}");
 
-				string fileName = Console.ReadLine();
-				client.WriteMessage(fileName);
+				Console.WriteLine("Введите имя файла:");
+				string fileName = Console.ReadLine(); // Ввод имени файла
+				client.WriteMessage(fileName); // Отправка имени файла
 
+				int fileLength = client.ReadMessageInt(); // Получение длинны файла
+				byte[] transferredFile = client.ReadFileByte(fileLength); // Получение файла как потока байт
+
+				File file = null;
+
+				if (operatingMode == 1) {
+					file = new TxtFile();
+				} else {
+					file = new BinaryFile();
+				}
+				file.SaveFile(fileName, transferredFile); // Сохранение файла
 
 			} catch (Exception e) {
 				Console.WriteLine(e);
