@@ -1,8 +1,9 @@
 ﻿namespace ProjectTCP.ClientFile
 {
-	public interface File
+	public abstract class File
 	{
-		string PathFolder { get; }
-		void SaveFile(string nameFile, byte[] file);
+		protected abstract string PathFolder { get; }
+		public abstract void SaveFile(string nameFile, byte[] file);
+		public bool Exists(string name) => System.IO.File.Exists(PathFolder + name);
 	}
 }

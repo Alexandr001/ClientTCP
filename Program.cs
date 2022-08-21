@@ -15,6 +15,9 @@ namespace ProjectTCP
 		private static NetworkStream _stream;
 		private static BinaryWriter _writer;
 		private static BinaryReader _reader;
+		private static File _file;
+		private static Client _client;
+
 		public static void Main(string[] args)
 		{
 			try {
@@ -25,52 +28,52 @@ namespace ProjectTCP
 
 				_reader = new BinaryReader(_stream);
 				_writer = new BinaryWriter(_stream);
-				Client client = new Client(_reader, _writer);
+				_client = new Client(_reader, _writer);
 
-				Console.WriteLine("Введите режим работы программы: \n" + "1 - Получить текстовый файл\n" + "2 - Получить двоичный файл");
+				Console.WriteLine("Введите режим работы программы: \n" 
+				                  + "1 - Получить текстовый файл\n" 
+				                  + "2 - Получить двоичный файл");
 
-				int operatingMode = Convert.ToInt32(Console.ReadLine());
-				client.WriteMessage(operatingMode); // Отправка режима работы
+				string operatingMode = Console.ReadLine();
+				if (operatingMode != "1" && operatingMode != "2") {
+					throw new Exception("Неправильный режим работы!");
+				}
+				_client.WriteMessage(operatingMode);
+				_client.PrintMessage("Режим работы отправлен!");
 
-				string listFileName = client.ReadMessageString(); // Чтение списска файлов
-				
-				Console.WriteLine($"Доступные файлы: \n {listFileName}");
+				string listFileName = _client.ReadString();
+				_client.PrintMessage($"Доступные файлы:\n{listFileName}");
 
 				Console.WriteLine("Введите имя файла:");
-				string fileName = Console.ReadLine(); // Ввод имени файла
-				client.WriteMessage(fileName); // Отправка имени файла
-
-				int fileLength = client.ReadMessageInt(); // Получение длинны файла
-				byte[] transferredFile = client.ReadFileByte(fileLength); // Получение файла как потока байт
-
-				File file = null;
-
-				if (operatingMode == 1) {
-					file = new TxtFile();
-				} else {
-					file = new BinaryFile();
+				string fileName = Console.ReadLine();
+				if (_file.Exists(fileName) == false) {
+					throw new Exception("Нет такого файла!");
 				}
-				file.SaveFile(fileName, transferredFile); // Сохранение файла
+				_client.WriteMessage(fileName);
+				_client.PrintMessage("Имя файла отправлено!");
+
+				int fileLength = _client.ReadInt();
+				_client.PrintMessage($"Размер файла в БАЙТАХ: {fileLength}");
+				byte[] transferredFile = _client.ReadBytes(fileLength);
+
+				if (operatingMode == "1") {
+					_file = new TxtFile();
+				} else {
+					_file = new BinaryFile();
+				}
+				
+				_file.SaveFile(fileName, transferredFile);
+				_client.PrintMessage("Файл сохранен!");
 
 			} catch (Exception e) {
 				Console.WriteLine(e);
-				throw;
+				_client.WriteMessage("0");
 			} finally {
 				_stream?.Close();
 				_tcpClient?.Close();
 				_reader.Close();
 				_writer.Close();
 			}
-			
-			
-			
-			
-			
-			// Выбрать режим работы: получить текстовый или двоичный файл
-			// Получить список доступных файлов
-			// Вводится имя файла
-			// Этот файл принимается и сохраняется
-			// Программа завершается
 		}
 	}
 }
