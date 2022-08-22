@@ -35,9 +35,8 @@ namespace ProjectTCP
 				                  + "2 - Получить двоичный файл");
 
 				string operatingMode = Console.ReadLine();
-				if (operatingMode != "1" && operatingMode != "2") {
-					throw new Exception("Неправильный режим работы!");
-				}
+				_file = File.FileFactory(operatingMode);
+				
 				_client.WriteMessage(operatingMode);
 				_client.PrintMessage("Режим работы отправлен!");
 
@@ -55,12 +54,6 @@ namespace ProjectTCP
 				int fileLength = _client.ReadInt();
 				_client.PrintMessage($"Размер файла в БАЙТАХ: {fileLength}");
 				byte[] transferredFile = _client.ReadBytes(fileLength);
-
-				if (operatingMode == "1") {
-					_file = new TxtFile();
-				} else {
-					_file = new BinaryFile();
-				}
 				
 				_file.SaveFile(fileName, transferredFile);
 				_client.PrintMessage("Файл сохранен!");

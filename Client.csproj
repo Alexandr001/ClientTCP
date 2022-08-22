@@ -43,6 +43,8 @@
         <Compile Include="ClientFile\BinaryFile.cs" />
         <Compile Include="ClientFile\File.cs" />
         <Compile Include="ClientFile\TxtFile.cs" />
+        <Compile Include="Mode.cs" />
+        <Compile Include="OperatingMode.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
